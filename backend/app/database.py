@@ -1,25 +1,24 @@
-import os
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base
 
-# Resolve DB path in backend folder
-BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB_PATH = os.path.join(BACKEND_DIR, "researchpilot.db")
-DATABASE_URL = f"sqlite:///{DB_PATH}"
+DATABASE_URL = "sqlite:///researchpilot.db"
 
 engine = create_engine(
-    DATABASE_URL, 
-    connect_args={"check_same_thread": False}  # Needed for SQLite multi-thread FastAPI
+    DATABASE_URL,
+    connect_args={"check_same_thread": False}
 )
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
 
 Base = declarative_base()
 
+
 def get_db():
-    """
-    Dependency to obtain database session.
-    """
     db = SessionLocal()
     try:
         yield db
