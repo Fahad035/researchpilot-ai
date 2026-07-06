@@ -1,48 +1,92 @@
-const API = "http://localhost:8000";
+const API_BASE = "http://localhost:8000";
 
-export async function createResearch(topic) {
+export async function getHealth() {
+    const res = await fetch(`${API_BASE}/api/health`);
 
-    const res = await fetch(`${API}/api/research`, {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-            topic
-        })
-
-    });
+    if (!res.ok)
+        throw new Error("Health check failed");
 
     return await res.json();
 }
 
-export function streamResearch(sessionId, onMessage) {
+export async function getHistory() {
 
-    const eventSource = new EventSource(
-        `${API}/api/research/${sessionId}/stream`
+    const res = await fetch(
+        `${API_BASE}/api/research/history`
     );
 
-    eventSource.onmessage = (event) => {
+    if (!res.ok)
+        throw new Error("Cannot load history");
 
-        const data = JSON.parse(event.data);
+    return await res.json();
+}
 
-        onMessage(data);
+export async function createResearch(topic) {
 
-        if (data.type === "complete") {
+    const res = await fetch(
+        `${API_BASE}/api/research`,
+        {
+            method: "POST",
 
-            eventSource.close();
+            headers: {
+                "Content-Type": "application/json"
+            },
 
+            body: JSON.stringify({
+                topic
+            })
         }
-    };
+    );
 
-    eventSource.onerror = () => {
+    if (!res.ok) {
 
-        eventSource.close();
+        const err = await res.json();
 
-    };
+        throw new Error(
+            err.detail || "Research creation failed"
+        );
+    }
 
-    return eventSource;
+    return await res.json();
+}
+
+export async function getResearch(sessionId) {
+
+    const res = await fetch(
+        `${API_BASE}/api/research/${sessionId}`
+    );
+
+    if (!res.ok)
+        throw new Error("Cannot load session");
+
+    return await res.json();
+}
+
+export async function deleteResearch(sessionId) {
+
+    const res = await fetch(
+        `${API_BASE}/api/research/${sessionId}`,
+        {
+            method: "DELETE"
+        }
+    );
+
+    if (!res.ok)
+        throw new Error("Delete failed");
+
+    return true;
+}
+
+/*
+---------------------------------------------------
+Server Sent Events
+---------------------------------------------------
+*/
+
+export function createResearchStream(sessionId) {
+
+    return new EventSource(
+        `${API_BASE}/api/research/${sessionId}/stream`
+    );
+
 }

@@ -392,47 +392,47 @@ class ResearchOrchestrator:
 # Save Results
 ########################################################
 
-def save_to_database(self):
+    def save_to_database(self):
 
-    db = SessionLocal()
+        db = SessionLocal()
 
-    try:
+        try:
 
-        session = (
+            session = (
             db.query(ResearchSession)
             .filter_by(id=self.session_id)
             .first()
-        )
+            )
 
-        if session:
+            if session:
 
-            session.status = "completed"
+                session.status = "completed"
 
-            session.plan = self.plan
+                session.plan = self.plan
 
-            session.papers = self.paper_results
+                session.papers = self.paper_results
 
-            session.summary = self.summary
+                session.summary = self.summary
 
-            session.github = self.github
+                session.github = self.github
 
-            session.comparison = self.comparison
+                session.comparison = self.comparison
 
-            session.citations = self.citations
+                session.citations = self.citations
 
-            session.report = self.report
+                session.report = self.report
 
-            db.commit()
+                db.commit()
 
-    except Exception as e:
+        except Exception as e:
 
-        print("Database Save Error:", e)
+            print("Database Save Error:", e)
 
-        db.rollback()
+            db.rollback()
 
-    finally:
+        finally:
 
-        db.close()
+            db.close()
     ########################################################
     # FastAPI Streaming Endpoint
     ########################################################
