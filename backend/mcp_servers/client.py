@@ -25,9 +25,9 @@ class MCPClientManager:
         
         # Pre-import tool functions as a fallback if subprocess launching fails
         try:
-            from backend.mcp.paper_server import search_papers
-            from backend.mcp.github_server import search_github
-            from backend.mcp.filesystem_server import save_notes, read_pdf
+            from mcp_servers.paper_server import search_papers
+            from mcp_servers.github_server import search_github
+            from mcp_servers.filesystem_server import save_notes, read_pdf
             self.fallback_tools = {
                 "search_papers": search_papers,
                 "search_github": search_github,
@@ -38,9 +38,9 @@ class MCPClientManager:
             # Absolute import fallback path fallback
             sys.path.append(os.path.dirname(os.path.dirname(MCP_DIR)))
             try:
-                from backend.mcp.paper_server import search_papers
-                from backend.mcp.github_server import search_github
-                from backend.mcp.filesystem_server import save_notes, read_pdf
+                from mcp_servers.paper_server import search_papers
+                from mcp_servers.github_server import search_github
+                from mcp_servers.filesystem_server import save_notes, read_pdf
                 self.fallback_tools = {
                     "search_papers": search_papers,
                     "search_github": search_github,
